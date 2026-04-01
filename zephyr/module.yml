@@ -3,17 +3,9 @@
 
 name: zmk-persistent-default-layer
 build:
-  # ZMK core is the main dependency
-  depends:
-    - zmk
-  # Folder containing CMakeLists.txt (. = root)
   cmake: .
-  # Kconfig filepath
   kconfig: Kconfig
   settings:
-    # Folder containing a "boards" folder (. = root)
     board_root: .
-    # Folder containing a "dts" folder (. = root)
     dts_root: .
-    # Folder containing a "snippets" folder (. = root)
     snippet_root: .
