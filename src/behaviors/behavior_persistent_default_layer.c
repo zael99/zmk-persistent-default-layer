@@ -35,18 +35,17 @@ static int pdf_settings_set(const char *name, size_t len, settings_read_cb read_
     int rc;
 
     if (settings_name_steq(name, "layer", &next) && !next) {
-            if (len != sizeof(saved_layer)) {
-                return -EINVAL;
-            }
-    
-            rc = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
-            if (rc >= 0) {
-                LOG_DBG("Loaded saved layer: %u", saved_layer);
-                return 0;
-            }
-    
-            return rc;
+        if (len != sizeof(saved_layer)) {
+            return -EINVAL;
         }
+
+        rc = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
+        if (rc >= 0) {
+            LOG_DBG("Loaded saved layer: %u", saved_layer);
+            return 0;
+        }
+
+        return rc;
     }
 
     return -ENOENT;
