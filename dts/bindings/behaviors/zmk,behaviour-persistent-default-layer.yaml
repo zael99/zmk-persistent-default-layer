@@ -6,9 +6,6 @@ compatible: "zmk,behaviour-persistent-default-layer"
 
 include: one_param.yaml
 
-binding-cells:
-  - layer
-
 properties:
   default-layer:
     type: int
