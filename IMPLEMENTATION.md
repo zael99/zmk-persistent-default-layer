@@ -48,7 +48,7 @@ When a key with the `pdf` behavior is pressed:
 
 ```c
 // Switch to specified layer
-zmk_layer_on(binding->param1);
+zmk_layer_activate(binding->param1);
 
 // Save for persistence
 saved_layer = binding->param1;
@@ -69,7 +69,7 @@ static int pdf_init(const struct device *dev)
     
     // If a layer was saved, activate it
     if (saved_layer > 0) {
-        zmk_layer_on(saved_layer);
+        zmk_layer_activate(saved_layer);
     }
     
     return 0;
