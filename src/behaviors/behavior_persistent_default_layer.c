@@ -16,6 +16,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #include <zephyr/settings/settings.h>
 
+
 struct behavior_persistent_default_layer_config {
     uint8_t default_layer;
 };
@@ -24,16 +25,30 @@ struct behavior_persistent_default_layer_data {
     uint8_t active_layer;
 };
 
-// Settings subsystem handler
-static int pdf_settings_set(const char *key, size_t len, settings_read_cb read_cb, void *cb_arg)
-{
-    if (strcmp(key, "active") == 0) {
-        ssize_t result = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
-        if (result > 0) {
-            LOG_DBG("Loaded saved layer: %u", saved_layer);
-            return 0;
+/* ====== Properities ====== */
+static uint8_t saved_layer = 0;
+/* ====== Properities ====== */
+
+/* ====== Settings ====== */
+static int pdf_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg) {
+    const char *next;
+    int rc;
+
+    if (settings_name_steq(name, "layer", &next) && !next) {
+            if (len != sizeof(saved_layer)) {
+                return -EINVAL;
+            }
+    
+            rc = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
+            if (rc >= 0) {
+                LOG_DBG("Loaded saved layer: %u", saved_layer);
+                return 0;
+            }
+    
+            return rc;
         }
     }
+
     return -ENOENT;
 }
 
@@ -41,8 +56,6 @@ static struct settings_handler pdf_settings_handler = {
     .name = "pdf",
     .h_set = pdf_settings_set,
 };
-
-static uint8_t saved_layer = 0;
 
 static int pdf_settings_save(void) {
     int ret = settings_save_one("pdf/active", &saved_layer, sizeof(saved_layer));
@@ -53,7 +66,9 @@ static int pdf_settings_save(void) {
     LOG_DBG("Saved layer: %u", saved_layer);
     return 0;
 }
+/* ====== Settings ====== */
 
+/* ====== Key Binding Handlers ====== */
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
     LOG_DBG("pdf binding_pressed: layer=%u", binding->param1);
 
@@ -76,7 +91,9 @@ static const struct behavior_driver_api behavior_pdf_driver_api = {
     .binding_pressed = pdf_binding_pressed,
     .binding_released = pdf_binding_released,
 };
+/* ====== Key Binding Handlers ====== */
 
+/* ====== Initialization ====== */
 static int pdf_init(const struct device *dev) {
     LOG_DBG("Initializing persistent default layer (pdf) behavior");
     
@@ -106,3 +123,4 @@ static int pdf_init(const struct device *dev) {
                             &behavior_pdf_driver_api);
 
 DT_INST_FOREACH_STATUS_OKAY(BEHAVIOR_PDF_INST)
+/* ====== Initialization ====== */
