@@ -41,7 +41,6 @@ static int pdf_settings_set(const char *name, size_t len, settings_read_cb read_
 
         rc = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
         if (rc >= 0) {
-            LOG_DBG("Loaded saved layer: %u", saved_layer);
             return 0;
         }
 
@@ -62,27 +61,25 @@ static int pdf_settings_save(void) {
         LOG_WRN("Failed to save persistent default layer: %d", ret);
         return ret;
     }
-    LOG_DBG("Saved layer: %u", saved_layer);
+
     return 0;
 }
 /* ====== Settings ====== */
 
 /* ====== Key Binding Handlers ====== */
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
-    LOG_DBG("pdf binding_pressed: layer=%u", binding->param1);
+    saved_layer = binding->param1;
 
     // Switch to the specified layer
-    zmk_keymap_layer_to(binding->param1, false);
+    zmk_keymap_layer_to(saved_layer);
     
     // Save the layer to persistent storage
-    saved_layer = binding->param1;
     pdf_settings_save();
 
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
 static int pdf_binding_released(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
-    LOG_DBG("pdf binding_released: layer=%u", binding->param1);
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
@@ -104,8 +101,7 @@ static int pdf_init(const struct device *dev) {
     
     // If a layer was saved, activate it
     if (saved_layer > 0) {
-        LOG_DBG("Restoring saved layer: %u", saved_layer);
-        zmk_keymap_layer_to(saved_layer, false);
+        zmk_keymap_layer_to(saved_layer);
     }
 
     return 0;
