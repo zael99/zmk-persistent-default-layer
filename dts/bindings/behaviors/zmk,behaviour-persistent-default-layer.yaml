@@ -10,6 +10,9 @@ compatible: "zmk,behaviour-persistent-default-layer"
 
 include: [base.yaml]
 
+binding-cells:
+  - layer
+
 properties:
   default-layer:
     type: int
