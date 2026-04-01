@@ -1,0 +1,2 @@
+add_library(zmk_behavior_pdf src/behavior_persistent_default_layer.c)
+target_include_directories(zmk_behavior_pdf PUBLIC include)

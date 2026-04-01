@@ -1,0 +1,16 @@
+menuconfig ZMK_BEHAVIOR_PDF
+	bool "Enable Persistent Default Layer (PDF) Behavior"
+	help
+	  Enable the pdf (persistent default layer) behavior which switches layers and persists
+	  the active layer to settings, restoring it on boot. This mimics the
+	  QMK PDF (Persistent Default Layer) function.
+
+if ZMK_BEHAVIOR_PDF
+
+config ZMK_BEHAVIOR_PDF_MAX_LAYER
+	int "Maximum layer number for pdf behavior"
+	default 7
+	help
+	  Maximum layer that can be set as the persistent default layer.
+
+endif # ZMK_BEHAVIOR_PDF

@@ -1,0 +1,58 @@
+/* Example ZMK keyboard configuration with pdf (persistent default layer) behavior
+ *
+ * This example shows how to use the pdf behavior to create
+ * a persistent layer switching mechanism.
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+
+/ {
+    behaviors {
+        pdf: pdf {
+            compatible = "zmk,behaviour-persistent-default-layer";
+            #binding-cells = <1>;
+            default-layer = <0>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+        label = "Default Keymap";
+
+        // Layer 0: Base/QWERTY Layer
+        base_layer {
+            label = "Base";
+            bindings = <
+                &kp Q      &kp W      &kp E      &kp R      &kp T      &kp Y      &kp U      &kp I      &kp O      &kp P
+                &kp A      &kp S      &kp D      &kp F      &kp G      &kp H      &kp J      &kp K      &kp L      &kp SEMI
+                &kp Z      &kp X      &kp C      &kp V      &kp B      &kp N      &kp M      &kp COMMA  &kp DOT    &kp SLASH
+                           &kp LSHIFT &pdf 1     &kp SPACE  &kp RET    &pdf 2     &kp RCTRL
+            >;
+        };
+
+        // Layer 1: Function Layer
+        function_layer {
+            label = "Fn";
+            bindings = <
+                &kp F1     &kp F2     &kp F3     &kp F4     &kp F5     &kp F6     &kp F7     &kp F8     &kp F9     &kp F10
+                &kp LCTRL  &kp LALT   &kp LCMD   &kp LSHIFT &trans     &kp LEFT   &kp DOWN   &kp UP     &kp RIGHT  &trans
+                &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans
+                           &trans     &trans     &trans     &trans     &trans     &trans
+            >;
+        };
+
+        // Layer 2: Number/Symbol Layer
+        symbol_layer {
+            label = "Sym";
+            bindings = <
+                &kp N1     &kp N2     &kp N3     &kp N4     &kp N5     &kp N6     &kp N7     &kp N8     &kp N9     &kp N0
+                &kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT  &kp CARET  &kp AMPS   &kp STAR   &kp LPAR   &kp RPAR
+                &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans     &trans
+                           &trans     &trans     &trans     &trans     &trans     &trans
+            >;
+        };
+    };
+};

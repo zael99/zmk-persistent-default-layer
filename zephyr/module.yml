@@ -1,12 +1,12 @@
-# Delete all unused properties.
+# ZMK Persistent Default Layer (PDF) Behavior Module
+# Provides persistent layer switching functionality
 
-# Give your module a name
-name: zmk-module-template
+name: zmk-persistent-default-layer
 build:
-  # List your dependencies
+  # ZMK core is the main dependency
   depends:
-    - zmk-example-dependency
-  # Folder containing a "CMakeLists.txt" (. = root)
+    - zmk
+  # Folder containing CMakeLists.txt (. = root)
   cmake: .
   # Kconfig filepath
   kconfig: Kconfig
@@ -16,4 +16,4 @@ build:
     # Folder containing a "dts" folder (. = root)
     dts_root: .
     # Folder containing a "snippets" folder (. = root)
-    snippet_root:  .
+    snippet_root: .

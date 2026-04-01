@@ -1,0 +1,16 @@
+# Copyright (c) 2024 ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: Default Layer Behavior
+
+compatible: "zmk,behavior-default-layer"
+
+include: [base.yaml]
+
+properties:
+  default-layer:
+    type: int
+    default: 0
+    description: |
+      The default layer to activate on init (if no layer is saved in settings).
+      This must be a valid layer number (0 based).
