@@ -7,7 +7,9 @@
 #define DT_DRV_COMPAT zmk_behaviour_persistent_default_layer
 
 #include <zephyr/device.h>
+#include <drivers/behavior.h>
 #include <zephyr/logging/log.h>
+
 #include <string.h>
 #include <zmk/behavior.h>
 #include <zmk/keymap.h>
@@ -86,6 +88,7 @@ static int pdf_binding_released(struct zmk_behavior_binding *binding, struct zmk
 static const struct behavior_driver_api behavior_pdf_driver_api = {
     .binding_pressed = pdf_binding_pressed,
     .binding_released = pdf_binding_released,
+    .locality = BEHAVIOR_LOCALITY_GLOBAL,
 };
 /* ====== Key Binding Handlers ====== */
 
