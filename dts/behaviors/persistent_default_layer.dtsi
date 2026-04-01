@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/ {
+    behaviors {
+        pdf: pdf {
+            compatible = "zmk,behaviour-persistent-default-layer";
+            #binding-cells = <1>;
+            default-layer = <0>;
+        };
+    };
+};

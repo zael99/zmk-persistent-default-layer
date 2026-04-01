@@ -1,14 +1,10 @@
 # Copyright (c) 2024 ZMK Contributors
 # SPDX-License-Identifier: MIT
-
-description: >-
-  Persistent Default Layer (pdf) Behavior allows changing the active layer and persists
-  the selection to the keyboard's settings, restoring it on boot.
-  Similar to QMK's PDF (Persistent Default Layer) function.
+description: RGB Extended
 
 compatible: "zmk,behaviour-persistent-default-layer"
 
-include: [base.yaml]
+include: one_param.yaml
 
 binding-cells:
   - layer
