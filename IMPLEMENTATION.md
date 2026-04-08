@@ -189,6 +189,5 @@ CONFIG_NVS=y
 
 Optional:
 ```
-CONFIG_ZMK_BEHAVIOR_PDF_MAX_LAYER=7
 CONFIG_ZMK_LOG_LEVEL=DBG  # For debugging
 ```

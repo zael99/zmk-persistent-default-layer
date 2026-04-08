@@ -11,6 +11,7 @@
 #include <string.h>
 #include <zmk/behavior.h>
 #include <zmk/keymap.h>
+#include <zmk/events/activity.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -71,7 +72,7 @@ static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_
     saved_layer = binding->param1;
 
     // Switch to the specified layer
-    zmk_keymap_layer_to(saved_layer);
+    zmk_keymap_layer_toggle(saved_layer);
     
     // Save the layer to persistent storage
     pdf_settings_save();
@@ -89,6 +90,22 @@ static const struct behavior_driver_api behavior_pdf_driver_api = {
 };
 /* ====== Key Binding Handlers ====== */
 
+/* ====== Event Listeners ====== */
+static int pdf_activity_listener(const zmk_event_t *eh) {
+    struct zmk_activity_state_changed *activity_ev = as_zmk_activity_state_changed(eh);
+    
+    // Restore saved layer when keyboard becomes active (wakes from sleep)
+    if (activity_ev->state == ZMK_ACTIVITY_ACTIVE && saved_layer > 0) {
+        zmk_keymap_layer_toggle(saved_layer);
+    }
+    
+    return 0;
+}
+
+ZMK_LISTENER(pdf_activity, pdf_activity_listener);
+ZMK_SUBSCRIPTION(pdf_activity, zmk_activity_state_changed);
+/* ====== Event Listeners ====== */
+
 /* ====== Initialization ====== */
 static int pdf_init(const struct device *dev) {
     LOG_DBG("Initializing persistent default layer (pdf) behavior");
@@ -101,7 +118,7 @@ static int pdf_init(const struct device *dev) {
     
     // If a layer was saved, activate it
     if (saved_layer > 0) {
-        zmk_keymap_layer_to(saved_layer);
+        zmk_keymap_layer_toggle(saved_layer);
     }
 
     return 0;

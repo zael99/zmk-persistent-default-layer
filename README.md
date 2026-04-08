@@ -114,12 +114,6 @@ Enable the behavior in your `prj.conf`:
 CONFIG_ZMK_BEHAVIOR_PDF=y
 ```
 
-Optional: Set the maximum layer number:
-
-```
-CONFIG_ZMK_BEHAVIOR_PDF_MAX_LAYER=7
-```
-
 ## How It Works
 
 1. **Initialization**: On keyboard startup, the module loads the saved layer from NVS
