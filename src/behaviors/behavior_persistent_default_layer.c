@@ -72,9 +72,6 @@ static int pdf_settings_save(void) {
 /* ====== Key Binding Handlers ====== */
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
     saved_layer = binding->param1;
-
-    // Switch to the specified layer
-    zmk_keymap_layer_toggle(saved_layer);
     
     // Save the layer to persistent storage
     pdf_settings_save();
@@ -83,6 +80,9 @@ static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_
 }
 
 static int pdf_binding_released(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
+    // Switch to the specified layer
+    zmk_keymap_layer_to(saved_layer);
+    
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
@@ -98,9 +98,9 @@ static int pdf_activity_listener(const zmk_event_t *eh) {
     struct zmk_activity_state_changed *activity_ev = as_zmk_activity_state_changed(eh);
     
     // Restore saved layer when keyboard becomes active (wakes from sleep)
-    if (activity_ev->state == ZMK_ACTIVITY_ACTIVE && saved_layer > 0) {
-        zmk_keymap_layer_toggle(saved_layer);
-    }
+    /*if (activity_ev->state == ZMK_ACTIVITY_ACTIVE && saved_layer > 0) {
+        zmk_keymap_layer_to(saved_layer);
+    }*/
     
     return 0;
 }
@@ -121,7 +121,7 @@ static int pdf_init(const struct device *dev) {
     
     // If a layer was saved, activate it
     if (saved_layer > 0) {
-        zmk_keymap_layer_toggle(saved_layer);
+        zmk_keymap_layer_to(saved_layer);
     }
 
     return 0;
