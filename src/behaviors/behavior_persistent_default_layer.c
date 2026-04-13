@@ -14,6 +14,7 @@
 #include <zmk/behavior.h>
 #include <zmk/keymap.h>
 #include <zmk/events/activity_state_changed.h>
+#include <zmk/activity.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -25,25 +26,24 @@ struct behavior_persistent_default_layer_config {
     uint8_t default_layer;
 };
 
-struct behavior_persistent_default_layer_data {
-    uint8_t active_layer;
-};
-
 /* ====== Properities ====== */
-static uint8_t saved_layer = 0;
+static uint8_t persistent_layer = 0;
 /* ====== Properities ====== */
 
 /* ====== Settings ====== */
+#define SETTINGS_PARTITION "pdf"
+#define SETTINGS_KEY_PERSISTENT_LAYER "persistent_layer"
+
 static int pdf_settings_set(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg) {
     const char *next;
     int rc;
 
-    if (settings_name_steq(name, "layer", &next) && !next) {
-        if (len != sizeof(saved_layer)) {
+    if (settings_name_steq(name, SETTINGS_KEY_PERSISTENT_LAYER, &next) && !next) {
+        if (len != sizeof(persistent_layer)) {
             return -EINVAL;
         }
 
-        rc = read_cb(cb_arg, &saved_layer, sizeof(saved_layer));
+        rc = read_cb(cb_arg, &persistent_layer, sizeof(persistent_layer));
         if (rc >= 0) {
             return 0;
         }
@@ -60,7 +60,7 @@ static struct settings_handler pdf_settings_handler = {
 };
 
 static int pdf_settings_save(void) {
-    int ret = settings_save_one("pdf/active", &saved_layer, sizeof(saved_layer));
+    int ret = settings_save_one(SETTINGS_PARTITION "/" SETTINGS_KEY_PERSISTENT_LAYER, &persistent_layer, sizeof(persistent_layer));
     if (ret < 0) {
         LOG_WRN("Failed to save persistent default layer: %d", ret);
         return ret;
@@ -72,7 +72,7 @@ static int pdf_settings_save(void) {
 
 /* ====== Key Binding Handlers ====== */
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
-    saved_layer = binding->param1;
+    persistent_layer = binding->param1;
     
     // Save the layer to persistent storage
     pdf_settings_save();
@@ -82,7 +82,7 @@ static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_
 
 static int pdf_binding_released(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
     // Switch to the specified layer
-    zmk_keymap_layer_to(saved_layer);
+    zmk_keymap_layer_to(persistent_layer);
     
     return ZMK_BEHAVIOR_OPAQUE;
 }
@@ -99,9 +99,9 @@ static int pdf_activity_listener(const zmk_event_t *eh) {
     struct zmk_activity_state_changed *activity_ev = as_zmk_activity_state_changed(eh);
     
     // Restore saved layer when keyboard becomes active (wakes from sleep)
-    /*if (activity_ev->state == ZMK_ACTIVITY_ACTIVE && saved_layer > 0) {
-        zmk_keymap_layer_to(saved_layer);
-    }*/
+    if (activity_ev->state == ZMK_ACTIVITY_ACTIVE && persistent_layer > 0) {
+        zmk_keymap_layer_to(persistent_layer);
+    }
     
     return 0;
 }
@@ -118,11 +118,11 @@ static int pdf_init(const struct device *dev) {
     settings_register(&pdf_settings_handler);
     
     // Load settings from persistent storage
-    settings_load_subtree("pdf");
+    settings_load_subtree(SETTINGS_PARTITION);
     
     // If a layer was saved, activate it
-    if (saved_layer > 0) {
-        zmk_keymap_layer_to(saved_layer);
+    if (persistent_layer > 0) {
+        zmk_keymap_layer_to(persistent_layer);
     }
 
     return 0;
