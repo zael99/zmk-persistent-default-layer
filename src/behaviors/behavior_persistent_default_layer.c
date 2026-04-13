@@ -13,13 +13,14 @@
 #include <string.h>
 #include <zmk/behavior.h>
 #include <zmk/keymap.h>
-#include <zmk/events/activity.h>
+#include <zmk/events/activity_state_changed.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #include <zephyr/settings/settings.h>
 
 
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_PDF)
 struct behavior_persistent_default_layer_config {
     uint8_t default_layer;
 };
@@ -139,3 +140,4 @@ static int pdf_init(const struct device *dev) {
 
 DT_INST_FOREACH_STATUS_OKAY(BEHAVIOR_PDF_INST)
 /* ====== Initialization ====== */
+#endif
