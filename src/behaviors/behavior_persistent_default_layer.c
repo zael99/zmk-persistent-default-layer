@@ -74,6 +74,9 @@ static int pdf_settings_save(void) {
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
     persistent_layer = binding->param1;
     
+    // Switch to the specified layer
+    zmk_keymap_layer_to(persistent_layer);
+    
     // Save the layer to persistent storage
     pdf_settings_save();
 
@@ -81,8 +84,6 @@ static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_
 }
 
 static int pdf_binding_released(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
-    // Switch to the specified layer
-    zmk_keymap_layer_to(persistent_layer);
     
     return ZMK_BEHAVIOR_OPAQUE;
 }
