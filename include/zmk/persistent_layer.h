@@ -6,6 +6,4 @@
 
 #pragma once
 
-#include <zmk/behavior.h>
-
-#define ZMK_BEHAVIOR_PDF_DEFAULT_LAYER 0
+static int pdf_settings_save(uint8_t layer);
