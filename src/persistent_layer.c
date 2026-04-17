@@ -43,7 +43,7 @@ static struct settings_handler pdf_settings_handler = {
     .h_set = pdf_load_settings,
 };
 
-static int pdf_settings_save(uint8_t layer) {
+int pdf_settings_save(uint8_t layer) {
     int ret = settings_save_one(SETTINGS_KEY_PERSISTENT_LAYER, &layer, sizeof(layer));
     //int ret = settings_save_one(SETTINGS_PARTITION "/" SETTINGS_KEY_PERSISTENT_LAYER, &persistent_layer, sizeof(persistent_layer));
     if (ret < 0) {
