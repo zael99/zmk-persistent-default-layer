@@ -6,4 +6,4 @@
 
 #pragma once
 
-int pdf_settings_save(uint8_t layer);
+int pdf_settings_save(zmk_keymap_layer_id_t layer);
