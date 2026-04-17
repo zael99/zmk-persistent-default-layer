@@ -11,7 +11,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_PDF)
 /* ====== Properities ====== */
-static uint8_t persistent_layer = 0;
+static zmk_keymap_layer_id_t persistent_layer = 0;
 /* ====== Properities ====== */
 
 /* ====== Settings ====== */
@@ -43,7 +43,7 @@ static struct settings_handler pdf_settings_handler = {
     .h_set = pdf_load_settings,
 };
 
-int pdf_settings_save(uint8_t layer) {
+int pdf_settings_save(zmk_keymap_layer_id_t layer) {
     int ret = settings_save_one(SETTINGS_KEY_PERSISTENT_LAYER, &layer, sizeof(layer));
     //int ret = settings_save_one(SETTINGS_PARTITION "/" SETTINGS_KEY_PERSISTENT_LAYER, &persistent_layer, sizeof(persistent_layer));
     if (ret < 0) {
@@ -83,7 +83,7 @@ static int pdf_init(const struct device *dev) {
     settings_load_subtree(SETTINGS_PARTITION);
     
     // If a layer was saved, activate it
-    if (persistent_layer > 0) {
+    if (persistent_layer != null) {
         zmk_keymap_layer_to(persistent_layer);
     }
 
