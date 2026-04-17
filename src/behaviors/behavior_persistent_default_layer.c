@@ -53,7 +53,7 @@ static int pdf_init(const struct device *dev) {
 }
 
 static struct behavior_persistent_default_layer_config behavior_pdf_config = {      
-    .default_layer = DT_INST_PROP(n, default_layer),
+    .default_layer = DT_INST_PROP(0, default_layer),
 };                                                                                      
                                                                                         
 BEHAVIOR_DT_INST_DEFINE(0, pdf_init, NULL, NULL,
