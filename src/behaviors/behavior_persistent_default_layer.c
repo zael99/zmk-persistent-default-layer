@@ -52,16 +52,13 @@ static int pdf_init(const struct device *dev) {
     return 0;
 }
 
-#define BEHAVIOR_PDF_INST(n)                                                                \
-    static struct behavior_persistent_default_layer_config behavior_pdf_config_##n = {      \
-        .default_layer = DT_INST_PROP(n, default_layer),                                    \
-    };                                                                                      \
-                                                                                            \
-    BEHAVIOR_DT_INST_DEFINE(n, pdf_init, NULL, NULL,                                        \
-                            &behavior_pdf_config_##n, POST_KERNEL,                          \
-                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,                            \
-                            &behavior_pdf_driver_api);
-
-DT_INST_FOREACH_STATUS_OKAY(BEHAVIOR_PDF_INST)
+static struct behavior_persistent_default_layer_config behavior_pdf_config = {      
+    .default_layer = DT_INST_PROP(n, default_layer),
+};                                                                                      
+                                                                                        
+BEHAVIOR_DT_INST_DEFINE(0, pdf_init, NULL, NULL,
+                        &behavior_pdf_config, POST_KERNEL,
+                        CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,
+                        &behavior_pdf_driver_api);
 /* ====== Initialization ====== */
 #endif
