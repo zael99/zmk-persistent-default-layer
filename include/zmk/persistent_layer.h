@@ -6,4 +6,4 @@
 
 #pragma once
 
-static int pdf_settings_save(uint8_t layer);
+int pdf_settings_save(uint8_t layer);
