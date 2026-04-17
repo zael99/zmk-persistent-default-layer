@@ -11,13 +11,14 @@
 #include <zephyr/logging/log.h>
 
 #include <string.h>
-#include <zmk/behavior.h>
-#include <zmk/keymap.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+#include <zmk/behavior.h>
+#include <zmk/keymap.h>
 #include <zmk/persistent_layer.h>
 
+#if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 #if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_PDF)
 
 struct behavior_persistent_default_layer_config {
@@ -62,4 +63,5 @@ BEHAVIOR_DT_INST_DEFINE(0, pdf_init, NULL, NULL,
                         CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,
                         &behavior_pdf_driver_api);
 /* ====== Initialization ====== */
+#endif
 #endif
