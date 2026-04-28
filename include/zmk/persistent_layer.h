@@ -10,3 +10,4 @@
 #include <zmk/keys.h>
 
 int pdf_settings_save(zmk_keymap_layer_id_t layer);
+zmk_keymap_layer_id_t pdf_get_persistent_layer(void);

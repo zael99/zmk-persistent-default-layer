@@ -6,6 +6,10 @@
 #include <zmk/activity.h>
 #include <zmk/keymap.h>
 
+#include <zmk/events/ble_active_profile_changed.h>
+#include <zmk/events/endpoint_changed.h>
+#include <zmk/events/hid_indicators_changed.h>
+
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #include <zephyr/settings/settings.h>
@@ -56,6 +60,10 @@ int pdf_settings_save(zmk_keymap_layer_id_t layer) {
 
     return 0;
 }
+
+zmk_keymap_layer_id_t pdf_get_persistent_layer(void) {
+    return persistent_layer;
+}
 /* ====== Settings ====== */
 
 /* ====== Event Listeners ====== */
@@ -72,6 +80,54 @@ static int pdf_activity_listener(const zmk_event_t *eh) {
 
 ZMK_LISTENER(pdf_activity, pdf_activity_listener);
 ZMK_SUBSCRIPTION(pdf_activity, zmk_activity_state_changed);
+
+/* BLE Profile Change Listener */
+static int pdf_ble_profile_listener(const zmk_event_t *eh) {
+    struct zmk_ble_active_profile_changed *ble_ev = as_zmk_ble_active_profile_changed(eh);
+    
+    // Restore saved layer when BLE profile changes
+    if (persistent_layer > 0) {
+        LOG_DBG("BLE profile changed to %d, restoring persistent layer %d", ble_ev->index, persistent_layer);
+        zmk_keymap_layer_to(persistent_layer);
+    }
+    
+    return 0;
+}
+
+ZMK_LISTENER(pdf_ble_profile, pdf_ble_profile_listener);
+ZMK_SUBSCRIPTION(pdf_ble_profile, zmk_ble_active_profile_changed);
+
+/* Endpoint/Transport Change Listener */
+static int pdf_endpoint_listener(const zmk_event_t *eh) {
+    struct zmk_endpoint_changed *ep_ev = as_zmk_endpoint_changed(eh);
+    
+    // Restore saved layer when endpoint (USB/BLE transport) changes
+    if (persistent_layer > 0) {
+        LOG_DBG("Endpoint changed, restoring persistent layer %d", persistent_layer);
+        zmk_keymap_layer_to(persistent_layer);
+    }
+    
+    return 0;
+}
+
+ZMK_LISTENER(pdf_endpoint, pdf_endpoint_listener);
+ZMK_SUBSCRIPTION(pdf_endpoint, zmk_endpoint_changed);
+
+/* HID Indicators/Connection State Listener */
+static int pdf_hid_indicators_listener(const zmk_event_t *eh) {
+    struct zmk_hid_indicators_changed *hid_ev = as_zmk_hid_indicators_changed(eh);
+    
+    // Restore saved layer when HID indicators change (connection state)
+    if (persistent_layer > 0) {
+        LOG_DBG("HID indicators changed, restoring persistent layer %d", persistent_layer);
+        zmk_keymap_layer_to(persistent_layer);
+    }
+    
+    return 0;
+}
+
+ZMK_LISTENER(pdf_hid_indicators, pdf_hid_indicators_listener);
+ZMK_SUBSCRIPTION(pdf_hid_indicators, zmk_hid_indicators_changed);
 /* ====== Event Listeners ====== */
 
 static int pdf_init(const struct device *dev) {
