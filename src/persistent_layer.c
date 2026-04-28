@@ -114,6 +114,7 @@ ZMK_LISTENER(pdf_endpoint, pdf_endpoint_listener);
 ZMK_SUBSCRIPTION(pdf_endpoint, zmk_endpoint_changed);
 
 /* HID Indicators/Connection State Listener */
+#if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
 static int pdf_hid_indicators_listener(const zmk_event_t *eh) {
     struct zmk_hid_indicators_changed *hid_ev = as_zmk_hid_indicators_changed(eh);
     
@@ -128,6 +129,7 @@ static int pdf_hid_indicators_listener(const zmk_event_t *eh) {
 
 ZMK_LISTENER(pdf_hid_indicators, pdf_hid_indicators_listener);
 ZMK_SUBSCRIPTION(pdf_hid_indicators, zmk_hid_indicators_changed);
+#endif
 /* ====== Event Listeners ====== */
 
 static int pdf_init(const struct device *dev) {
