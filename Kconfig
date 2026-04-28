@@ -5,14 +5,6 @@ menuconfig ZMK_BEHAVIOR_PDF
 	  the active layer to settings, restoring it on boot. This mimics the
 	  QMK PDF (Persistent Default Layer) function.
 
-if ZMK_BEHAVIOR_PDF
-
-config ZMK_BEHAVIOR_PDF
-	select SETTINGS
-	select NVS
-
-endif # ZMK_BEHAVIOR_PDF
-
 menuconfig ZMK_BEHAVIOR_LAYER_INFO
 	bool "Enable Layer Info Output Behavior"
 	depends on ZMK_BEHAVIOR_PDF
@@ -21,10 +13,18 @@ menuconfig ZMK_BEHAVIOR_LAYER_INFO
 	  saved default layer to the connected device (via HID keyboard reports).
 	  This allows you to type out the current layer information by pressing a key.
 
+if ZMK_BEHAVIOR_PDF
+
+config ZMK_BEHAVIOR_PDF
+	select SETTINGS
+	select NVS
+
+
 if ZMK_BEHAVIOR_LAYER_INFO
 
 config ZMK_BEHAVIOR_LAYER_INFO
 	select HID_DEVICE
 
 endif # ZMK_BEHAVIOR_LAYER_INFO
+endif # ZMK_BEHAVIOR_PDF
 
