@@ -6,4 +6,7 @@
 
 #pragma once
 
+#include <zmk/keymap.h>
+#include <zmk/keys.h>
+
 int pdf_settings_save(zmk_keymap_layer_id_t layer);

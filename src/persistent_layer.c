@@ -4,6 +4,7 @@
 
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/activity.h>
+#include <zmk/keymap.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -83,7 +84,7 @@ static int pdf_init(const struct device *dev) {
     settings_load_subtree(SETTINGS_PARTITION);
     
     // If a layer was saved, activate it
-    if (persistent_layer != null) {
+    if (persistent_layer != 0) {
         zmk_keymap_layer_to(persistent_layer);
     }
 

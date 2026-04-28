@@ -28,11 +28,10 @@ struct behavior_persistent_default_layer_config {
 /* ====== Key Binding Handlers ====== */
 static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
     // Switch to the specified layer
-    zmk_keymap_layer_id_t layerId = zmk_keymap_layer_index_to_id(binding->param1);
-    zmk_keymap_layer_to(layerId);
+    zmk_keymap_layer_to(binding->param1);
     
     // Save the layer to persistent storage
-    pdf_settings_save(layerId);
+    pdf_settings_save(binding->param1);
 
     return ZMK_BEHAVIOR_OPAQUE;
 }

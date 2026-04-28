@@ -7,4 +7,8 @@ menuconfig ZMK_BEHAVIOR_PDF
 
 if ZMK_BEHAVIOR_PDF
 
+config ZMK_BEHAVIOR_PDF
+	select SETTINGS
+	select NVS
+
 endif # ZMK_BEHAVIOR_PDF
