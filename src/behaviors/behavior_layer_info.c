@@ -83,7 +83,7 @@ static int send_hid_report(hid_keycode_t key_info) {
         .report_id = ZMK_HID_REPORT_ID_KEYBOARD,
         .body = {
             .modifiers = key_info.modifier,
-            _reserved = 0,
+            ._reserved = 0,
             .keys = {key_info.keycode, 0, 0, 0, 0, 0}
         }
     };
