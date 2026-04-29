@@ -9,6 +9,7 @@
 #include <zephyr/device.h>
 #include <drivers/behavior.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/kernel.h>
 
 #include <string.h>
 
@@ -18,7 +19,6 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/keymap.h>
 #include <zmk/hid.h>
 #include <zmk/persistent_layer.h>
-#include <zmk/events/keycode_state_changed.h>
 
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 #if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_INFO)
@@ -79,17 +79,31 @@ static keycode_info_t ascii_to_keycode(uint8_t ascii_char) {
     return result;  // Unsupported or default
 }
 
-/* Helper to post a keycode through ZMK's macro system */
+/* Helper to send a keycode using zmk_behavior_invoke_binding */
 static int send_keycode(keycode_info_t key_info) {
-    // Post key pressed event
-    zmk_event_raise(zmk_keycode_state_changed_from_encoded(
-        (key_info.keycode | (key_info.mods << 8)), true),
-        false);
+    // Create a keycode binding for the "key-press" behavior
+    struct zmk_behavior_binding binding = {
+        .behavior_dev = "kp",  // key-press behavior
+        .param1 = key_info.keycode,
+        .param2 = key_info.mods,
+    };
     
-    // Post key released event  
-    zmk_event_raise(zmk_keycode_state_changed_from_encoded(
-        (key_info.keycode | (key_info.mods << 8)), false),
-        false);
+    struct zmk_behavior_binding_event event = {
+        .position = 0,
+        .timestamp = k_uptime_get(),
+    };
+    
+    // Invoke the binding for key press
+    zmk_behavior_invoke_binding(&binding, event, true);
+    
+    // Small delay
+    k_sleep(K_MSEC(5));
+    
+    // Invoke the binding for key release
+    zmk_behavior_invoke_binding(&binding, event, false);
+    
+    // Delay between key presses
+    k_sleep(K_MSEC(5));
     
     return 0;
 }
