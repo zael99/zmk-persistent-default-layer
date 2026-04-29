@@ -81,9 +81,12 @@ static hid_keycode_t ascii_to_hid(uint8_t ascii_char) {
 static int send_hid_report(hid_keycode_t key_info) {
     struct zmk_hid_keyboard_report report = {
         .report_id = ZMK_HID_REPORT_ID_KEYBOARD,
-        .body = {.modifier = key_info.modifier,
-                 .reserved = 0,
-                 .keys = {key_info.keycode, 0, 0, 0, 0, 0}}};
+        .body = {
+            .modifiers = key_info.modifier,
+            .reserved = 0,
+            .keys = {key_info.keycode, 0, 0, 0, 0, 0}
+        }
+    };
 
     zmk_hid_keyboard_report(&report.body);
     zmk_hid_keyboard_report_clear();
