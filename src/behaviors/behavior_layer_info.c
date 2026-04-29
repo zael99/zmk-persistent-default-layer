@@ -35,41 +35,41 @@ static hid_keycode_t ascii_to_hid(uint8_t ascii_char) {
     
     // Numbers 0-9
     if (ascii_char >= '0' && ascii_char <= '9') {
-        result.keycode = HID_KBD_1 + (ascii_char - '0' + 9) % 10;
+        result.keycode = HID_KEY_1 + (ascii_char - '0' + 9) % 10;
         if (ascii_char == '0') {
-            result.keycode = HID_KBD_0;
+            result.keycode = HID_KEY_0;
         }
         return result;
     }
     
     // Space
     if (ascii_char == ' ') {
-        result.keycode = HID_KBD_SPACEBAR;
+        result.keycode = HID_KEY_SPACE;
         return result;
     }
     
     // Comma
     if (ascii_char == ',') {
-        result.keycode = HID_KBD_COMMA;
+        result.keycode = HID_KEY_COMMA;
         return result;
     }
     
     // Colon (Shift+;)
     if (ascii_char == ':') {
-        result.keycode = HID_KBD_SEMICOLON;
+        result.keycode = HID_KEY_SEMICOLON;
         result.modifier = 0x02;  // Left shift
         return result;
     }
     
     // Letters A-Z (lowercase)
     if (ascii_char >= 'a' && ascii_char <= 'z') {
-        result.keycode = HID_KBD_A + (ascii_char - 'a');
+        result.keycode = HID_KEY_A + (ascii_char - 'a');
         return result;
     }
     
     // Letters A-Z (uppercase with shift)
     if (ascii_char >= 'A' && ascii_char <= 'Z') {
-        result.keycode = HID_KBD_A + (ascii_char - 'A');
+        result.keycode = HID_KEY_A + (ascii_char - 'A');
         result.modifier = 0x02;  // Left shift
         return result;
     }
