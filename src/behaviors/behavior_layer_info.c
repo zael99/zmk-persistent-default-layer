@@ -18,26 +18,28 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/keymap.h>
 #include <zmk/hid.h>
 #include <zmk/persistent_layer.h>
+#include <zmk/events/keycode_state_changed.h>
 
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 #if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_INFO)
 
 #include <zmk/keys.h>
 
-/* Helper function to convert ASCII character to HID keycode and modifier */
+/* Helper function to convert ASCII character to ZMK keycode and modifiers */
 typedef struct {
-    uint8_t keycode;
-    uint8_t modifier;
-} hid_keycode_t;
+    uint32_t keycode;
+    uint8_t mods;
+} keycode_info_t;
 
-static hid_keycode_t ascii_to_hid(uint8_t ascii_char) {
-    hid_keycode_t result = {0, 0};
+static keycode_info_t ascii_to_keycode(uint8_t ascii_char) {
+    keycode_info_t result = {0, 0};
     
     // Numbers 0-9
     if (ascii_char >= '0' && ascii_char <= '9') {
-        result.keycode = HID_KEY_1 + (ascii_char - '0' + 9) % 10;
         if (ascii_char == '0') {
             result.keycode = HID_KEY_0;
+        } else {
+            result.keycode = HID_KEY_1 + (ascii_char - '1');
         }
         return result;
     }
@@ -57,7 +59,7 @@ static hid_keycode_t ascii_to_hid(uint8_t ascii_char) {
     // Colon (Shift+;)
     if (ascii_char == ':') {
         result.keycode = HID_KEY_SEMICOLON;
-        result.modifier = 0x02;  // Left shift
+        result.mods = MOD_LSFT;
         return result;
     }
     
@@ -70,31 +72,29 @@ static hid_keycode_t ascii_to_hid(uint8_t ascii_char) {
     // Letters A-Z (uppercase with shift)
     if (ascii_char >= 'A' && ascii_char <= 'Z') {
         result.keycode = HID_KEY_A + (ascii_char - 'A');
-        result.modifier = 0x02;  // Left shift
+        result.mods = MOD_LSFT;
         return result;
     }
     
     return result;  // Unsupported or default
 }
 
-/* Helper to send a single keypress via HID */
-static int send_hid_report(hid_keycode_t key_info) {
-    struct zmk_hid_keyboard_report report = {
-        .report_id = ZMK_HID_REPORT_ID_KEYBOARD,
-        .body = {
-            .modifiers = key_info.modifier,
-            ._reserved = 0,
-            .keys = {key_info.keycode, 0, 0, 0, 0, 0}
-        }
-    };
-
-    zmk_hid_keyboard_report(&report.body);
-    //zmk_hid_keyboard_report_clear();
-
+/* Helper to post a keycode through ZMK's macro system */
+static int send_keycode(keycode_info_t key_info) {
+    // Post key pressed event
+    zmk_event_raise(zmk_keycode_state_changed_from_encoded(
+        (key_info.keycode | (key_info.mods << 8)), true),
+        false);
+    
+    // Post key released event  
+    zmk_event_raise(zmk_keycode_state_changed_from_encoded(
+        (key_info.keycode | (key_info.mods << 8)), false),
+        false);
+    
     return 0;
 }
 
-/* Main output function - formats and sends layer info */
+/* Main output function - formats and sends layer info using ZMK macros */
 static int send_layer_info(void) {
     // Get current active layer
     zmk_keymap_layer_id_t active_layer = zmk_keymap_highest_layer_active();
@@ -106,19 +106,19 @@ static int send_layer_info(void) {
     char buffer[30];
     snprintf(buffer, sizeof(buffer), "Active: %d, Default: %d", active_layer, persistent_layer);
     
-    LOG_DBG("Layer info output: %s", buffer);
+    LOG_INF("Layer info: %s", buffer);
     
-    // Send each character
+    // Send each character using ZMK macros
     for (int i = 0; buffer[i] != '\0'; i++) {
         uint8_t ch = buffer[i];
-        hid_keycode_t key_info = ascii_to_hid(ch);
+        keycode_info_t key_info = ascii_to_keycode(ch);
         
         if (key_info.keycode == 0) {
             LOG_DBG("Skipping unsupported character: %c (0x%02x)", ch, ch);
             continue;
         }
         
-        send_hid_report(key_info);
+        send_keycode(key_info);
     }
     
     return 0;
