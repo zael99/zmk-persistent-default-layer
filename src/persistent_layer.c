@@ -99,7 +99,7 @@ ZMK_SUBSCRIPTION(pdf_ble_profile, zmk_ble_active_profile_changed);
 
 /* Endpoint/Transport Change Listener */
 static int pdf_endpoint_listener(const zmk_event_t *eh) {
-    struct zmk_endpoint_changed *ep_ev = as_zmk_endpoint_changed(eh);
+    __unused struct zmk_endpoint_changed *ep_ev = as_zmk_endpoint_changed(eh);
     
     // Restore saved layer when endpoint (USB/BLE transport) changes
     if (persistent_layer > 0) {
@@ -132,7 +132,7 @@ ZMK_SUBSCRIPTION(pdf_hid_indicators, zmk_hid_indicators_changed);
 #endif
 /* ====== Event Listeners ====== */
 
-static int pdf_init(const struct device *dev) {
+static int pdf_init(void) {
     LOG_DBG("Initializing persistent default layer (pdf) behavior");
     
     // Register settings handler
