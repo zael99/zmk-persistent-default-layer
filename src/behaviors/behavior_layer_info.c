@@ -89,7 +89,7 @@ static int send_hid_report(hid_keycode_t key_info) {
     };
 
     zmk_hid_keyboard_report(&report.body);
-    zmk_hid_keyboard_report_clear();
+    //zmk_hid_keyboard_report_clear();
 
     return 0;
 }
