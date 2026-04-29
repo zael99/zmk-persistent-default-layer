@@ -81,8 +81,11 @@ static keycode_info_t ascii_to_keycode(uint8_t ascii_char) {
 
 /* Helper to send a keycode using zmk_behavior_invoke_binding */
 static int send_keycode(keycode_info_t key_info) {
-    // Create a keycode binding for the "key-press" behavior
-    struct zmk_behavior_binding binding = {
+    zmk_hid_keyboard_press(key_info.keycode);
+    k_sleep(K_MSEC(5));
+    zmk_hid_keyboard_release(key_info.keycode);
+    k_sleep(K_MSEC(5));
+    /*struct zmk_behavior_binding binding = {
         .behavior_dev = "kp",  // key-press behavior
         .param1 = key_info.keycode,
         .param2 = key_info.mods,
@@ -103,7 +106,7 @@ static int send_keycode(keycode_info_t key_info) {
     zmk_behavior_invoke_binding(&binding, event, false);
     
     // Delay between key presses
-    k_sleep(K_MSEC(5));
+    k_sleep(K_MSEC(5));*/
     
     return 0;
 }
