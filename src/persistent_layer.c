@@ -1,6 +1,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/settings/settings.h>
 
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/activity.h>
@@ -11,8 +12,6 @@
 #include <zmk/events/hid_indicators_changed.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
-
-#include <zephyr/settings/settings.h>
 
 #if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_PDF)
     /* ====== Properities ====== */
@@ -26,7 +25,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
     static int pdf_settings_load(void) {
         zmk_keymap_layer_id_t stored_layer = 0;
-        int ret = settings_load_one(SETTINGS_KEY, &stored_layer, sizeof(stored_layer));
+        int ret = settings_read(SETTINGS_KEY, &stored_layer, sizeof(stored_layer));
         
         if (ret == 0) {
             LOG_DBG("Loaded persistent layer %d from storage", stored_layer);
