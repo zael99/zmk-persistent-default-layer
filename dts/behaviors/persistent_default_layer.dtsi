@@ -11,10 +11,5 @@
             #binding-cells = <1>;
             default-layer = <0>;
         };
-
-        layer_info: layer_info {
-            compatible = "zmk,behaviour-layer-info";
-            #binding-cells = <0>;
-        };
     };
 };

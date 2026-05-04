@@ -1,8 +1,0 @@
-# Copyright (c) 2024 ZMK Contributors
-# SPDX-License-Identifier: MIT
-
-description: Layer Info Output Behavior
-
-compatible: "zmk,behaviour-layer-info"
-
-include: base.yaml
