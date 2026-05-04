@@ -23,7 +23,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
     #define SETTINGS_KEY_PERSISTENT_LAYER "persistent_layer"
     #define SETTINGS_KEY "pdf/persistent_layer"
 
-    static int pdf_settings_load(void) {
+    /*static int pdf_settings_load(void) {
         zmk_keymap_layer_id_t stored_layer = 0;
         int ret = settings_read(SETTINGS_KEY, &stored_layer, sizeof(stored_layer));
         
@@ -43,19 +43,20 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
         }
 
         return ret;
-    }
+    }*/
 
-    /*static int pdf_load_settings(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg) {
+    static int pdf_settings_load(const char *name, size_t len, settings_read_cb read_cb, void *cb_arg) {
         const char *next;
         int rc;
 
         if (settings_name_steq(name, SETTINGS_KEY_PERSISTENT_LAYER, &next) && !next) {
-            if (len != sizeof(persistent_layer)) {
-                return -EINVAL;
-            }
+            //if (len != sizeof(persistent_layer)) {
+            //    return -EINVAL;
+            //}
 
             rc = read_cb(cb_arg, &persistent_layer, sizeof(persistent_layer));
             if (rc >= 0) {
+                zmk_keymap_layer_to(persistent_layer);
                 return 0;
             }
 
@@ -67,8 +68,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
     static struct settings_handler pdf_settings_handler = {
         .name = SETTINGS_PARTITION,
-        .h_set = pdf_load_settings,
-    };*/
+        .h_set = pdf_settings_load,
+    };
 
     int pdf_settings_save(zmk_keymap_layer_id_t layer) {
         persistent_layer = layer;
@@ -170,8 +171,11 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
     static int pdf_init(void) {
         LOG_DBG("Initializing persistent default layer (pdf) behavior");
         
-        int ret = pdf_settings_load();
-        zmk_keymap_layer_to(persistent_layer);
+        // Register settings handler
+        settings_register(&pdf_settings_handler);
+        
+        // Load settings from persistent storage
+        settings_load_subtree(SETTINGS_PARTITION);
 
         return 0;
     }
