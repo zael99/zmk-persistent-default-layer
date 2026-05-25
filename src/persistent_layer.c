@@ -27,6 +27,11 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
     #define PDF_DEBOUNCE_DELAY_MS 50
     /* ====== Properties ====== */
 
+
+    zmk_keymap_layer_id_t pdf_get_persistent_layer(void) {
+        return persistent_layer;
+    }
+
     /* ====== Settings ====== */
     #define SETTINGS_PARTITION "pdf"
     #define SETTINGS_KEY_PERSISTENT_LAYER "persistent_layer"
@@ -92,10 +97,6 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
         has_stored_layer = true;
         pdf_switch_to_persistent_layer();
         return pdf_settings_save();
-    }
-
-    zmk_keymap_layer_id_t pdf_get_persistent_layer(void) {
-        return persistent_layer;
     }
     /* ====== Settings ====== */
 
