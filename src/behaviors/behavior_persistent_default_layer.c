@@ -27,11 +27,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
         /* ====== Key Binding Handlers ====== */
         static int pdf_binding_pressed(struct zmk_behavior_binding *binding, struct zmk_behavior_binding_event event) {
-            // Switch to the specified layer
-            zmk_keymap_layer_to(binding->param1);
-            
             // Save the layer to persistent storage
-            pdf_settings_save(binding->param1);
+            pdf_switch_and_save(binding->param1);
 
             return ZMK_BEHAVIOR_OPAQUE;
         }
